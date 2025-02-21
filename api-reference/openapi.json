@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI definition",
-    "version": "v0"
+    "title": "DUMGUM",
+    "version": "2.0"
   },
   "servers": [
     {
@@ -15,8 +15,8 @@
         "tags": [
           "content-creation"
         ],
-        "summary": "Update project's content creation configuration",
-        "operationId": "update",
+        "summary": "Update configuration",
+        "operationId": "content-creation-configuration-update",
         "requestBody": {
           "content": {
             "application/json": {
@@ -38,8 +38,7 @@
               }
             }
           }
-        },
-        "x-hideTryItPanel": true
+        }
       }
     },
     "/cs/v1/content_creation/conversations/enqueue": {
@@ -47,8 +46,9 @@
         "tags": [
           "content-creation"
         ],
-        "summary": "Enqueue a conversation to be processed asynchronously",
-        "operationId": "enqueue",
+        "summary": "Enqueue Conversation",
+        "description": "Enqueue a conversation to be processed asynchronously",
+        "operationId": "content-creation-conversations-enqueue",
         "requestBody": {
           "content": {
             "application/json": {
@@ -63,13 +63,229 @@
           "204": {
             "description": "No Content"
           }
-        },
-        "x-hideTryItPanel": true
+        }
       }
     }
   },
   "components": {
     "schemas": {
+      "ContentCreationProfileFeatureSet": {
+        "type": "object",
+        "properties": {
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "weight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eyesColor": {
+            "type": "string",
+            "enum": [
+              "BLACK",
+              "BLUE_GREY",
+              "BLUE",
+              "BROWN",
+              "GREEN_BLUE",
+              "GREEN",
+              "GREY"
+            ]
+          },
+          "hairColor": {
+            "type": "string",
+            "enum": [
+              "BLACK",
+              "BLOND",
+              "BROWN",
+              "DARK_BLOND",
+              "GREY",
+              "RED",
+              "WHITE"
+            ]
+          },
+          "hairLength": {
+            "type": "string",
+            "enum": [
+              "AVERAGE",
+              "BALD",
+              "HALF_LONG",
+              "LONG",
+              "SHORT",
+              "VERY_LONG",
+              "VERY_SHORT"
+            ]
+          },
+          "maritalStatus": {
+            "type": "string",
+            "enum": [
+              "SINGLE",
+              "SEPARATED",
+              "IN_RELATIONSHIP",
+              "MARRIED",
+              "DIVORCED",
+              "WIDOW"
+            ]
+          },
+          "job": {
+            "type": "string",
+            "enum": [
+              "ACCOUNTANT",
+              "ADMINISTRATIVE_ASSISTANT",
+              "BANK",
+              "CASHIER",
+              "CHEF",
+              "FINANCIAL_ANALYST",
+              "FLIGHT_ATTENDANT",
+              "GRAPHIC_DESIGNER",
+              "HUMAN_RESOURCES",
+              "INFORMATION_TECHNOLOGY",
+              "LAWYER",
+              "LOGISTICS",
+              "NURSE",
+              "PARALEGAL",
+              "PHYSICIAN",
+              "POLICE_OFFICER",
+              "PROJECT_MANAGER",
+              "PUBLIC_RELATIONS",
+              "RECEPTIONIST",
+              "RETAIL_MANAGER",
+              "SALESWOMAN",
+              "SCIENTIST",
+              "SECRETARY",
+              "SOCIAL_WORKER",
+              "SOFTWARE_DEVELOPER",
+              "TEACHER",
+              "VETERINARIAN"
+            ]
+          },
+          "interests": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "BDSM_BLOOD_PLAY",
+                "BDSM_BONDAGE",
+                "BDSM_BREATH_PLAY",
+                "BDSM_BUTTOCKS",
+                "BDSM_DOMINATION",
+                "BDSM_EDGE_PLAY",
+                "BDSM_FIRE_PLAY",
+                "BDSM_FISTING",
+                "BDSM_FLOGGING",
+                "BDSM_GOLDEN_SHOWER",
+                "BDSM_HARD",
+                "BDSM_KINKSTER",
+                "BDSM_KNIFE_PLAY",
+                "BDSM_MASOCHIST",
+                "BDSM_NEEDLE_PLAY",
+                "BDSM_ORGASM_DENIAL",
+                "BDSM_PET_PLAY",
+                "BDSM_QUEENING_FACESITTING",
+                "BDSM_SADISM",
+                "BDSM_SOFT",
+                "BDSM_STRAP_ON_DILDO",
+                "BDSM_SUBMISSION",
+                "BDSM_SUSPENSION",
+                "BDSM_ZENTAI"
+              ]
+            }
+          },
+          "lookingFor": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "MAN",
+                "WOMAN"
+              ]
+            }
+          }
+        },
+        "required": [
+          "interests",
+          "lookingFor"
+        ]
+      },
+      "ContentCreationProfileFetchResult": {
+        "type": "object",
+        "properties": {
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ProfileResult"
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "ProfileResult": {
+        "type": "object",
+        "properties": {
+          "gender": {
+            "type": "string",
+            "enum": [
+              "WOMAN",
+              "MAN"
+            ]
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "features": {
+            "$ref": "#/components/schemas/ContentCreationProfileFeatureSet"
+          },
+          "mainPictureUrl": {
+            "type": "string"
+          },
+          "pictures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "privatePictures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "features",
+          "gender",
+          "pictures",
+          "privatePictures"
+        ]
+      },
       "ContentCreationConfiguration": {
         "type": "object",
         "properties": {
@@ -85,7 +301,11 @@
           "webhookEvents": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "answer.created",
+                "answer.processing"
+              ]
             },
             "uniqueItems": true
           },
@@ -99,32 +319,20 @@
             "type": "integer",
             "format": "int32"
           },
-          "likeActionEnabled": {
+          "reportUserProfile": {
             "type": "boolean"
           },
-          "conversationStopActionEnabled": {
-            "type": "boolean"
-          },
-          "reportUserProfileActionEnabled": {
-            "type": "boolean"
-          },
-          "pictureRequestActionEnabled": {
-            "type": "boolean"
-          },
-          "privateAlbumRequestActionEnabled": {
+          "conversationStoppable": {
             "type": "boolean"
           }
         },
         "required": [
           "chatHistoryEndpointUrl",
-          "conversationStopActionEnabled",
+          "conversationStoppable",
           "customHeaders",
           "defaultMaxProcessingTimeSeconds",
-          "likeActionEnabled",
-          "pictureRequestActionEnabled",
-          "privateAlbumRequestActionEnabled",
           "profileEndpointUrl",
-          "reportUserProfileActionEnabled",
+          "reportUserProfile",
           "webhookEndpointUrl",
           "webhookEvents"
         ]
@@ -159,8 +367,17 @@
         "type": "object",
         "description": "Represents a request to enqueue a conversation",
         "properties": {
+          "userProfileId": {
+            "type": "string",
+            "description": "A user profile ID; this will represent the profile that will receive the generated reply."
+          },
+          "personaProfileId": {
+            "type": "string",
+            "description": "A persona profile ID; this will represent the profile that our operator will impersonate."
+          },
           "language": {
             "type": "string",
+            "description": "The language used to generate the reply.",
             "enum": [
               "EN",
               "FR",
@@ -171,91 +388,117 @@
               "ES_LATAM"
             ]
           },
-          "userProfileId": {
-            "type": "string"
-          },
-          "personaProfileId": {
-            "type": "string"
-          },
           "replyMode": {
             "type": "string",
+            "dependentRequired": {
+              "HUMAN": [
+                "replyParameters.aiChatModel"
+              ]
+            },
+            "description": "\n- Use `HUMAN` to receive a response written by a human.\n- Use `AI` to receive a response generated by our AI model.\n\nWhen using `AI`, the parameter `replyParameters.aiChatModel` must also be provided.\n      ",
             "enum": [
               "AI",
               "HUMAN"
             ]
           },
           "userProfileVersion": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Specify the current user profile version. If it differs from the stored version, it will trigger a profile data refresh."
           },
           "personaProfileVersion": {
-            "type": "string"
-          },
-          "aiPersonaName": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Specify the current persona profile version. If it differs from the stored version, it will trigger a profile data refresh."
           },
           "message": {
-            "$ref": "#/components/schemas/ContentCreationConversationEnqueueRequest.Message"
+            "type": [
+              "object",
+              "null"
+            ],
+            "$ref": "#/components/schemas/ContentCreationConversationEnqueueRequest.Message",
+            "description": "Enqueue a conversation with a message."
           },
           "tags": {
-            "type": "object",
+            "type": [
+              "object",
+              "null"
+            ],
             "additionalProperties": {
               "type": "string"
-            }
+            },
+            "description": "A map of tags to associate with the generated answer. You can use any key-value pair to store additional information along with your request."
           },
-          "maxProcessingTimeSeconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "testmode": {
-            "type": "boolean"
-          },
-          "contentCreationProductType": {
-            "type": "string",
-            "enum": [
-              "CASUAL_DATING",
-              "BDSM"
-            ]
+          "testMode": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Specify whether the conversation should be processed in test mode. In test mode, you will receive a dummy answer, which is useful for testing purposes.\n> *You will not be charged* when using test mode."
           },
           "replyParameters": {
-            "$ref": "#/components/schemas/ContentCreationQueueConversationReplyParameterSet"
+            "type": [
+              "object",
+              "null"
+            ],
+            "$ref": "#/components/schemas/ContentCreationQueueConversationReplyParameterSet",
+            "description": "A set of parameters that allow you to customize the reply you receive from us, enabling greater flexibility and control over the response format, content, and behavior."
           }
         },
         "required": [
           "language",
           "personaProfileId",
           "replyMode",
-          "replyParameters",
-          "tags",
-          "testmode",
           "userProfileId"
         ]
       },
       "ContentCreationConversationEnqueueRequest.Message": {
-        "type": "object",
+        "type": [
+          "object",
+          "null"
+        ],
         "properties": {
           "date": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "The date when the message was sent."
           },
           "type": {
             "type": "string",
+            "dependentRequired": {
+              "TEXT": [
+                "text"
+              ]
+            },
+            "description": "\nThe type of the message.\n\n| Type                         | Description                                                             |\n|------------------------------|-------------------------------------------------------------------------|\n| `TEXT`                       | User sent a text message to persona.                                    |\n| `ACTION_FAVORITE_ADD`        | User profile added persona profile in its favorites.                    |\n| `ACTION_FAVORITE_REMOVE`     | User profile removed persona profile in its favorites.                  |\n| `ACTION_LIKE`                | User profile liked persona profile.                                     |\n| `ACTION_PICTURE_REQUEST`     | User profile asked for persona profile's picture.                       |\n| `ACTION_PICTURE_SHARE`       | User shared a picture.                                                  |\n| `ACTION_PRIVATE_ALBUM_ALLOW` | User has granted access to their private album for the persona profile. |\n| `ACTION_PRIVATE_ALBUM_DENY`  | User has denied access to their private album for the persona profile.  |\n",
             "enum": [
               "ACTION_FAVORITE_ADD",
               "ACTION_FAVORITE_REMOVE",
-              "ACTION_LIKE",
+              "ACTION_POKE",
               "ACTION_PICTURE_REQUEST",
               "ACTION_PICTURE_SHARE",
               "ACTION_PRIVATE_ALBUM_ALLOW",
               "ACTION_PRIVATE_ALBUM_DENY",
-              "ACTION_PRIVATE_ALBUM_REQUEST",
               "TEXT"
             ]
           },
           "pictureUrl": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The URL of the picture associated with the message. This parameter is optional and can be used to provide a picture to be displayed with the message."
           },
           "text": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The text of the message. This parameter is required when `type` is `TEXT`."
           }
         },
         "required": [
@@ -266,70 +509,180 @@
       "ContentCreationQueueConversationReplyParameterSet": {
         "type": "object",
         "properties": {
-          "like": {
-            "type": "boolean"
-          },
           "favorite": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "\nAllows our operator to manage a persona profile's favorites:\n- `PRESENT` indicates that the user is marked as a favorite, allowing the operator to remove them.\n- `ABSENT` indicates that the user is not a favorite, allowing the operator to add them.\n- If the value is `null` (default), this feature is disabled.\n\nThis will only work in `HUMAN` reply mode.\n    ",
             "enum": [
               "ABSENT",
               "PRESENT"
             ]
           },
-          "pictureRequest": {
-            "type": "boolean"
+          "privateAlbumAccess": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "\nAllows our operator to manage a persona profile’s private album access:\n- `ALLOWED` means the user currently has access, allowing the operator to revoke it.\n- `DENIED` means the user does not have access, allowing the operator to grant it.\n- If the value is `null` (default), this feature is disabled.\n\nThis will only work in `HUMAN` reply mode.\n    ",
+            "enum": [
+              "ALLOWED",
+              "DENIED"
+            ]
+          },
+          "productType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": "CASUAL_DATING",
+            "description": "Defines how our operators will reply.\nThis will only work in `HUMAN` reply mode.",
+            "enum": [
+              "CASUAL_DATING",
+              "BDSM",
+              "BDSM_DOMINANT",
+              "BDSM_SUBMISSIVE",
+              "BDSM_BEGINNER",
+              "GAY_MAN",
+              "GAY_WOMAN",
+              "TRANSGENDER_MAN",
+              "TRANSGENDER_WOMAN"
+            ]
+          },
+          "aiMessageFrequency": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Allows you to alternate between AI and human messages. For example, using the value 2, every other message will be an AI response.",
+            "maximum": 10,
+            "minimum": 2
+          },
+          "allowedActions": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "\nThis will only work in `HUMAN` reply mode.\n\n| Name                    | Description                                                       |\n|-------------------------|-------------------------------------------------------------------|\n| `POKE`                  | User's has sent a 'poke' to the persona profile.                  |\n| `PICTURE_REQUEST`       | User's has requested a picture to the persona profile.            |\n| `PRIVATE_ALBUM_REQUEST` | User's has requested private album access to the persona profile. |\n",
+            "items": {
+              "type": "string",
+              "enum": [
+                "POKE",
+                "PICTURE_REQUEST",
+                "PRIVATE_ALBUM_REQUEST"
+              ]
+            },
+            "uniqueItems": true
           },
           "shareablePictures": {
-            "type": "array",
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "An array of shareable picture URLs that the operator can use.\nThis will only work in `HUMAN` reply mode.",
             "items": {
               "type": "string"
             },
             "uniqueItems": true
           },
-          "privateAlbumAccess": {
-            "type": "string",
-            "enum": [
-              "ALLOW",
-              "DENY"
-            ]
-          },
           "profileDistance": {
-            "type": "integer",
-            "format": "int32"
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Distance between the persona profile and the user in kilometers or miles."
           },
           "customInstructionName": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Custom instruction name to use for the reply. You can manage your custom instructions in your customer dashboard.\nThis will only work in `HUMAN` reply mode."
           },
           "emojis": {
-            "type": "boolean"
-          },
-          "aiPersonaName": {
-            "type": "string"
-          },
-          "aiHumanFallback": {
-            "type": "boolean"
-          },
-          "aiBufferSeconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "privateAlbumRequest": {
-            "type": "boolean"
-          },
-          "conversationStop": {
-            "type": "boolean"
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Allows our operator/chat models to add emojis to the reply."
           },
           "reportUserProfile": {
-            "type": "boolean"
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Allows our operator to report the user profile, you will then receive `answer.created` webhook event with a type of `ACTION_REPORT_PROFILE_*`.\nThis will only work in `HUMAN` reply mode."
+          },
+          "conversationStoppable": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Allows our operator to stop the conversation (e.g. if the user starts being disrespectful).\nThis will only work in `HUMAN` reply mode."
+          },
+          "aiChatModel": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Allows you to set the AI chat model to use for generating the reply."
+          },
+          "aiBufferSeconds": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "default": "15",
+            "description": "Allows you to set the AI buffer time (in seconds). This delay enables the AI to wait before generating a response, allowing it to accumulate more messages.",
+            "maximum": 60,
+            "minimum": 0
           },
           "maxProcessingTimeSeconds": {
-            "type": "integer",
-            "format": "int32"
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "default": "600",
+            "description": "\nAllows you to set the maximum processing time (in seconds) for a reply.\nIf this time limit is exceeded, the conversation will be dropped, and\nyou will receive an `answer.dropped` webhook event.\n\n> **WARNING: This value may occasionally be exceeded by several seconds due to various factors.**\n",
+            "maximum": 86400,
+            "minimum": 600
+          },
+          "dropPolicy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "\nAllows you to set the reply drop policy. The default value is `DROP`.\n\n| Policy Name   | Description                                                                                                                                         |\n|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|\n| `DROP`        | Drop the conversation once the maximum processing time is reached.                                                                                  |\n| `AI_FALLBACK` | If a conversation enqueued with HUMAN reply mode is not answered within the maximum processing time, it will automatically switch to AI reply mode. |\n"
           }
-        },
-        "required": [
-          "aiHumanFallback"
-        ]
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "ProfileEndpoint": {
+      "post": {
+        "parameters": [
+          {
+            "name": "profileId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentCreationProfileFetchResult"
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
