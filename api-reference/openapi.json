@@ -72,6 +72,16 @@
       "ContentCreationProfileFeatureSet": {
         "type": "object",
         "properties": {
+          "ethnicity": {
+            "type": "string",
+            "enum": [
+              "ASIAN",
+              "BLACK",
+              "CAUCASIAN",
+              "MIDDLE_EAST",
+              "OTHER"
+            ]
+          },
           "height": {
             "type": "integer",
             "format": "int32"
@@ -200,6 +210,30 @@
                 "WOMAN"
               ]
             }
+          },
+          "sexualOrientation": {
+            "type": "string",
+            "enum": [
+              "HETEROSEXUAL",
+              "GAY",
+              "LESBIAN",
+              "BISEXUAL",
+              "ASEXUAL",
+              "DEMISEXUAL",
+              "PANSEXUAL",
+              "QUEER",
+              "QUESTIONING",
+              "AROMANTIC",
+              "OMNISEXUAL",
+              "NOT_LISTED"
+            ]
+          },
+          "childrenCount": {
+            "type": "string",
+            "format": "byte"
+          },
+          "wantsChildren": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -223,6 +257,36 @@
         },
         "required": [
           "profile"
+        ]
+      },
+      "ContentCreationProfilePersonalitySet": {
+        "type": "object",
+        "properties": {
+          "personality": {
+            "type": "string",
+            "enum": [
+              "SUPPORTIVE",
+              "TEASING",
+              "CONFIDENT",
+              "GEEKY",
+              "POETIC",
+              "HIGH_ENERGY",
+              "INTELLECTUAL",
+              "ROMANTIC",
+              "SARCASTIC",
+              "POSSESSIVE",
+              "NATURAL",
+              "APPRECIATIVE",
+              "PASSIONNATE"
+            ]
+          },
+          "writingStyle": {
+            "$ref": "#/components/schemas/WritingStyle"
+          }
+        },
+        "required": [
+          "personality",
+          "writingStyle"
         ]
       },
       "ProfileResult": {
@@ -263,6 +327,9 @@
           "features": {
             "$ref": "#/components/schemas/ContentCreationProfileFeatureSet"
           },
+          "personality": {
+            "$ref": "#/components/schemas/ContentCreationProfilePersonalitySet"
+          },
           "mainPictureUrl": {
             "type": "string"
           },
@@ -284,6 +351,55 @@
           "gender",
           "pictures",
           "privatePictures"
+        ]
+      },
+      "WritingStyle": {
+        "type": "object",
+        "properties": {
+          "sentenceLength": {
+            "type": "string",
+            "enum": [
+              "SHORT",
+              "REGULAR",
+              "LONG"
+            ]
+          },
+          "messageLength": {
+            "type": "string",
+            "enum": [
+              "SHORT",
+              "REGULAR",
+              "LONG"
+            ]
+          },
+          "errors": {
+            "type": "string"
+          },
+          "vocabRichness": {
+            "type": "string"
+          },
+          "formality": {
+            "type": "string"
+          },
+          "slangUsage": {
+            "type": "string"
+          },
+          "punctuationEmphasis": {
+            "type": "string"
+          },
+          "approach": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "approach",
+          "errors",
+          "formality",
+          "messageLength",
+          "punctuationEmphasis",
+          "sentenceLength",
+          "slangUsage",
+          "vocabRichness"
         ]
       },
       "ContentCreationConfiguration": {
@@ -324,9 +440,22 @@
           },
           "conversationStoppable": {
             "type": "boolean"
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "POKE",
+                "PICTURE_REQUEST",
+                "PRIVATE_ALBUM_REQUEST"
+              ]
+            },
+            "uniqueItems": true
           }
         },
         "required": [
+          "allowedActions",
           "chatHistoryEndpointUrl",
           "conversationStoppable",
           "customHeaders",
@@ -369,36 +498,27 @@
         "properties": {
           "userProfileId": {
             "type": "string",
-            "description": "A user profile ID; this will represent the profile that will receive the generated reply."
+            "description": "A user profile ID; this will represent the profile that will receive the generated reply.",
+            "minLength": 1
           },
           "personaProfileId": {
             "type": "string",
-            "description": "A persona profile ID; this will represent the profile that our operator will impersonate."
+            "description": "A persona profile ID; this will represent the profile that our operator will impersonate.",
+            "minLength": 1
           },
           "language": {
             "type": "string",
             "description": "The language used to generate the reply.",
             "enum": [
               "EN",
+              "EN_GB",
               "FR",
+              "FR_BE",
               "RO",
               "NL",
               "ES",
               "DE",
               "ES_LATAM"
-            ]
-          },
-          "replyMode": {
-            "type": "string",
-            "dependentRequired": {
-              "HUMAN": [
-                "replyParameters.aiChatModel"
-              ]
-            },
-            "description": "\n- Use `HUMAN` to receive a response written by a human.\n- Use `AI` to receive a response generated by our AI model.\n\nWhen using `AI`, the parameter `replyParameters.aiChatModel` must also be provided.\n      ",
-            "enum": [
-              "AI",
-              "HUMAN"
             ]
           },
           "userProfileVersion": {
@@ -415,14 +535,6 @@
             ],
             "description": "Specify the current persona profile version. If it differs from the stored version, it will trigger a profile data refresh."
           },
-          "message": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "$ref": "#/components/schemas/ContentCreationConversationEnqueueRequest.Message",
-            "description": "Enqueue a conversation with a message."
-          },
           "tags": {
             "type": [
               "object",
@@ -438,7 +550,7 @@
               "boolean",
               "null"
             ],
-            "description": "Specify whether the conversation should be processed in test mode. In test mode, you will receive a dummy answer, which is useful for testing purposes.\n> *You will not be charged* when using test mode."
+            "description": "Specify whether the conversation should be processed in test mode. In test mode, you will receive a dummy answer, which is useful for testing purposes.\n> **You will not be charged** when using test mode."
           },
           "replyParameters": {
             "type": [
@@ -452,104 +564,12 @@
         "required": [
           "language",
           "personaProfileId",
-          "replyMode",
           "userProfileId"
-        ]
-      },
-      "ContentCreationConversationEnqueueRequest.Message": {
-        "type": [
-          "object",
-          "null"
-        ],
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The date when the message was sent."
-          },
-          "type": {
-            "type": "string",
-            "dependentRequired": {
-              "TEXT": [
-                "text"
-              ]
-            },
-            "description": "\nThe type of the message.\n\n| Type                         | Description                                                             |\n|------------------------------|-------------------------------------------------------------------------|\n| `TEXT`                       | User sent a text message to persona.                                    |\n| `ACTION_FAVORITE_ADD`        | User profile added persona profile in its favorites.                    |\n| `ACTION_FAVORITE_REMOVE`     | User profile removed persona profile in its favorites.                  |\n| `ACTION_LIKE`                | User profile liked persona profile.                                     |\n| `ACTION_PICTURE_REQUEST`     | User profile asked for persona profile's picture.                       |\n| `ACTION_PICTURE_SHARE`       | User shared a picture.                                                  |\n| `ACTION_PRIVATE_ALBUM_ALLOW` | User has granted access to their private album for the persona profile. |\n| `ACTION_PRIVATE_ALBUM_DENY`  | User has denied access to their private album for the persona profile.  |\n",
-            "enum": [
-              "ACTION_FAVORITE_ADD",
-              "ACTION_FAVORITE_REMOVE",
-              "ACTION_POKE",
-              "ACTION_PICTURE_REQUEST",
-              "ACTION_PICTURE_SHARE",
-              "ACTION_PRIVATE_ALBUM_ALLOW",
-              "ACTION_PRIVATE_ALBUM_DENY",
-              "TEXT"
-            ]
-          },
-          "pictureUrl": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "The URL of the picture associated with the message. This parameter is optional and can be used to provide a picture to be displayed with the message."
-          },
-          "text": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "The text of the message. This parameter is required when `type` is `TEXT`."
-          }
-        },
-        "required": [
-          "date",
-          "type"
         ]
       },
       "ContentCreationQueueConversationReplyParameterSet": {
         "type": "object",
         "properties": {
-          "favorite": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "\nAllows our operator to manage a persona profile's favorites:\n- `PRESENT` indicates that the user is marked as a favorite, allowing the operator to remove them.\n- `ABSENT` indicates that the user is not a favorite, allowing the operator to add them.\n- If the value is `null` (default), this feature is disabled.\n\nThis will only work in `HUMAN` reply mode.\n    ",
-            "enum": [
-              "ABSENT",
-              "PRESENT"
-            ]
-          },
-          "privateAlbumAccess": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "\nAllows our operator to manage a persona profile’s private album access:\n- `ALLOWED` means the user currently has access, allowing the operator to revoke it.\n- `DENIED` means the user does not have access, allowing the operator to grant it.\n- If the value is `null` (default), this feature is disabled.\n\nThis will only work in `HUMAN` reply mode.\n    ",
-            "enum": [
-              "ALLOWED",
-              "DENIED"
-            ]
-          },
-          "productType": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "default": "CASUAL_DATING",
-            "description": "Defines how our operators will reply.\nThis will only work in `HUMAN` reply mode.",
-            "enum": [
-              "CASUAL_DATING",
-              "BDSM",
-              "BDSM_DOMINANT",
-              "BDSM_SUBMISSIVE",
-              "BDSM_BEGINNER",
-              "GAY_MAN",
-              "GAY_WOMAN",
-              "TRANSGENDER_MAN",
-              "TRANSGENDER_WOMAN"
-            ]
-          },
           "aiMessageFrequency": {
             "type": [
               "integer",
@@ -560,32 +580,51 @@
             "maximum": 10,
             "minimum": 2
           },
-          "allowedActions": {
+          "aiSentenceLength": {
             "type": [
-              "array",
+              "string",
               "null"
             ],
-            "description": "\nThis will only work in `HUMAN` reply mode.\n\n| Name                    | Description                                                       |\n|-------------------------|-------------------------------------------------------------------|\n| `POKE`                  | User's has sent a 'poke' to the persona profile.                  |\n| `PICTURE_REQUEST`       | User's has requested a picture to the persona profile.            |\n| `PRIVATE_ALBUM_REQUEST` | User's has requested private album access to the persona profile. |\n",
-            "items": {
-              "type": "string",
-              "enum": [
-                "POKE",
-                "PICTURE_REQUEST",
-                "PRIVATE_ALBUM_REQUEST"
-              ]
-            },
-            "uniqueItems": true
+            "description": "AI Only. Allow you to specify the length of the sentences composing the response. Default to REGULAR",
+            "enum": [
+              "SHORT",
+              "REGULAR",
+              "LONG"
+            ]
           },
-          "shareablePictures": {
+          "aiMessageLength": {
             "type": [
-              "array",
+              "string",
               "null"
             ],
-            "description": "An array of shareable picture URLs that the operator can use.\nThis will only work in `HUMAN` reply mode.",
-            "items": {
-              "type": "string"
-            },
-            "uniqueItems": true
+            "description": "AI Only. Allow you to specify the length of the response",
+            "enum": [
+              "SHORT",
+              "REGULAR",
+              "LONG"
+            ]
+          },
+          "aiPersonality": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "AI Only. Allow you to override the personality given to the persona",
+            "enum": [
+              "SUPPORTIVE",
+              "TEASING",
+              "CONFIDENT",
+              "GEEKY",
+              "POETIC",
+              "HIGH_ENERGY",
+              "INTELLECTUAL",
+              "ROMANTIC",
+              "SARCASTIC",
+              "POSSESSIVE",
+              "NATURAL",
+              "APPRECIATIVE",
+              "PASSIONNATE"
+            ]
           },
           "profileDistance": {
             "type": [
@@ -595,13 +634,6 @@
             "format": "int32",
             "description": "Distance between the persona profile and the user in kilometers or miles."
           },
-          "customInstructionName": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Custom instruction name to use for the reply. You can manage your custom instructions in your customer dashboard.\nThis will only work in `HUMAN` reply mode."
-          },
           "emojis": {
             "type": [
               "boolean",
@@ -609,26 +641,18 @@
             ],
             "description": "Allows our operator/chat models to add emojis to the reply."
           },
-          "reportUserProfile": {
-            "type": [
-              "boolean",
-              "null"
-            ],
-            "description": "Allows our operator to report the user profile, you will then receive `answer.created` webhook event with a type of `ACTION_REPORT_PROFILE_*`.\nThis will only work in `HUMAN` reply mode."
-          },
-          "conversationStoppable": {
-            "type": [
-              "boolean",
-              "null"
-            ],
-            "description": "Allows our operator to stop the conversation (e.g. if the user starts being disrespectful).\nThis will only work in `HUMAN` reply mode."
-          },
           "aiChatModel": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Allows you to set the AI chat model to use for generating the reply."
+            "description": "Allows you to set the AI chat model to use for generating the reply.",
+            "enum": [
+              "gen-hard-inter-20240724",
+              "gen-hard-inter-2024-12-03",
+              "dating-smart-1",
+              "dating-pro-1"
+            ]
           },
           "aiBufferSeconds": {
             "type": [
@@ -648,16 +672,19 @@
             ],
             "format": "int32",
             "default": "600",
-            "description": "\nAllows you to set the maximum processing time (in seconds) for a reply.\nIf this time limit is exceeded, the conversation will be dropped, and\nyou will receive an `answer.dropped` webhook event.\n\n> **WARNING: This value may occasionally be exceeded by several seconds due to various factors.**\n",
+            "description": "\nAllows you to set the maximum processing time (in seconds) for a reply.\nIf this time limit is exceeded, the conversation will be dropped, and\nyou will receive an `conversation.dropped` webhook event.\n\n> **WARNING: This value may occasionally be exceeded by several seconds due to various factors.**\n",
             "maximum": 86400,
             "minimum": 600
           },
-          "dropPolicy": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "\nAllows you to set the reply drop policy. The default value is `DROP`.\n\n| Policy Name   | Description                                                                                                                                         |\n|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|\n| `DROP`        | Drop the conversation once the maximum processing time is reached.                                                                                  |\n| `AI_FALLBACK` | If a conversation enqueued with HUMAN reply mode is not answered within the maximum processing time, it will automatically switch to AI reply mode. |\n"
+          "aiEnableSexualTextContent": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Allows our chat models to generate sexual text content."
+          },
+          "aiFixedResponseLength": {
+            "type": "boolean",
+            "default": "false",
+            "description": "Force our chat model to strictly respect `aiSentenceLength` and `aiMessageLength` parameters"
           }
         }
       }
